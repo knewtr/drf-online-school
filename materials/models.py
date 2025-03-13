@@ -14,6 +14,7 @@ class Course(models.Model):
     preview = models.ImageField(
         upload_to="materials/preview", blank=True, null=True, verbose_name="Превью"
     )
+    lessons = models.ManyToManyField("Lesson", verbose_name="Уроки")
 
     class Meta:
         verbose_name = "Курс"
@@ -41,7 +42,7 @@ class Lesson(models.Model):
         blank=True,
         null=True,
     )
-    course = models.ForeignKey(
+    courses = models.ForeignKey(
         Course,
         on_delete=models.SET_NULL,
         verbose_name="Курс",
