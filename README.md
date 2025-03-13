@@ -1,1 +1,1 @@
-## Django REST framework project
+## Django REST framework project 1
