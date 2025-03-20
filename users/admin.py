@@ -1,12 +1,14 @@
 from django.contrib import admin
 
-from users.models import User, Payment
+from users.models import Payment, User
+
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     list_display = ("email", "phone", "city")
     search_field = ("email",)
     ordering = ("email",)
+
 
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
