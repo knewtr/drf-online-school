@@ -133,6 +133,7 @@ class Subscription(models.Model):
         blank=True,
         null=True,
     )
+    is_active = models.BooleanField(default=False, verbose_name="Статус подписки")
 
     class Meta:
         verbose_name = "Подписка"

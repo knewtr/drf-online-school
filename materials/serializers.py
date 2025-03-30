@@ -25,10 +25,18 @@ class CourseSerializer(ModelSerializer):
 class CourseDetailSerializer(ModelSerializer):
     counted_lessons = SerializerMethodField()
     lessons = LessonSerializer()
-    subscription = SubscriptionSerializer()
+    subscription = SerializerMethodField()
 
     def get_count_lessons(self, course):
         return Course.objects.filter(lessons=course.lessons).count()
+
+    def get_subscription(self, course):
+        user = self.request.user
+        subscription = Subscription.object.filter(user=user, course=course)
+        if subscription:
+            return subscription.is_active
+        else:
+            return False
 
     class Meta:
         model = Course
