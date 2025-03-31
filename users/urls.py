@@ -15,20 +15,20 @@ app_name = UsersConfig.name
 
 
 urlpatterns = [
-    path("payments/", PaymentListAPIView.as_view(), name="payments_list"),
-    path("payments/create/", PaymentCreateAPIView.as_view(), name="payments_create"),
+    path("payment/", PaymentListAPIView.as_view(), name="payment_list"),
+    path("payment/create/", PaymentCreateAPIView.as_view(), name="payment_create"),
     path(
-        "payments/<int:pk>/", PaymentRetrieveAPIView.as_view(), name="payments_retrieve"
+        "payment/<int:pk>/", PaymentRetrieveAPIView.as_view(), name="payment_retrieve"
     ),
     path(
-        "payments/<int:pk>/update/",
+        "payment/<int:pk>/update/",
         PaymentUpdateAPIView.as_view(),
-        name="payments_update",
+        name="payment_update",
     ),
     path(
-        "payments/<int:pk>/delete/",
+        "payment/<int:pk>/delete/",
         PaymentDestroyAPIView.as_view(),
-        name="payments_delete",
+        name="payment_delete",
     ),
     path("register/", UserCreateAPIView.as_view(), name="register"),
     path("login/", TokenObtainPairView.as_view(), name="login"),

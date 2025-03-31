@@ -7,4 +7,7 @@ pillow==11.1.0
 black==25.1.0
 isort==6.0.1
 coverage==7.7.1
+drf-spectacular==0.28.0
+drf-yasg==1.21.10
+stripe==11.6.0
 

@@ -5,11 +5,13 @@ from rest_framework.generics import (CreateAPIView, DestroyAPIView,
                                      ListAPIView, RetrieveAPIView,
                                      UpdateAPIView)
 from rest_framework.response import Response
-
+from rest_framework.permissions import IsAuthenticated
+from users.permissions import IsModer
 from materials.models import Course
 from users.models import Payment, Subscription, User
 from users.serializers import (PaymentSerializer, SubscriptionSerializer,
                                UserSerializer)
+from users.services import create_stripe_price, create_stripe_session
 
 
 class UserCreateAPIView(CreateAPIView):
@@ -45,6 +47,18 @@ class UserDestroyAPIView(DestroyAPIView):
 class PaymentCreateAPIView(CreateAPIView):
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
+    permission_classes = (
+        IsAuthenticated,
+        ~IsModer,
+    )
+
+    def perform_create(self, serializer):
+        payment = serializer.save(user=self.request.user)
+        price = create_stripe_price(payment.amount)
+        session_id, payment_link = create_stripe_session(price)
+        payment.session_id = session_id
+        payment.link = payment_link
+        payment.save()
 
 
 class PaymentRetrieveAPIView(RetrieveAPIView):
