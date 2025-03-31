@@ -6,28 +6,29 @@ from rest_framework_simplejwt.views import (TokenObtainPairView,
 from users.apps import UsersConfig
 from users.views import (PaymentCreateAPIView, PaymentDestroyAPIView,
                          PaymentListAPIView, PaymentRetrieveAPIView,
-                         PaymentUpdateAPIView, UserCreateAPIView,
-                         UserDestroyAPIView, UserListAPIView,
-                         UserRetrieveAPIView, UserUpdateAPIView)
+                         PaymentUpdateAPIView, SubscriptionCreateAPIView,
+                         UserCreateAPIView, UserDestroyAPIView,
+                         UserListAPIView, UserRetrieveAPIView,
+                         UserUpdateAPIView)
 
 app_name = UsersConfig.name
 
 
 urlpatterns = [
-    path("payments/", PaymentListAPIView.as_view(), name="payments_list"),
-    path("payments/create/", PaymentCreateAPIView.as_view(), name="payments_create"),
+    path("payment/", PaymentListAPIView.as_view(), name="payment_list"),
+    path("payment/create/", PaymentCreateAPIView.as_view(), name="payment_create"),
     path(
-        "payments/<int:pk>/", PaymentRetrieveAPIView.as_view(), name="payments_retrieve"
+        "payment/<int:pk>/", PaymentRetrieveAPIView.as_view(), name="payment_retrieve"
     ),
     path(
-        "payments/<int:pk>/update/",
+        "payment/<int:pk>/update/",
         PaymentUpdateAPIView.as_view(),
-        name="payments_update",
+        name="payment_update",
     ),
     path(
-        "payments/<int:pk>/delete/",
+        "payment/<int:pk>/delete/",
         PaymentDestroyAPIView.as_view(),
-        name="payments_delete",
+        name="payment_delete",
     ),
     path("register/", UserCreateAPIView.as_view(), name="register"),
     path("login/", TokenObtainPairView.as_view(), name="login"),
@@ -36,4 +37,7 @@ urlpatterns = [
     path("user/", UserListAPIView.as_view(), name="user_list"),
     path("user/<int:pk>/update/", UserUpdateAPIView.as_view(), name="user_update"),
     path("user/<int:pk>/delete/", UserDestroyAPIView.as_view(), name="user_delete"),
+    path(
+        "subscription/", SubscriptionCreateAPIView.as_view(), name="course_subscription"
+    ),
 ]

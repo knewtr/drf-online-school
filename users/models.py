@@ -112,7 +112,46 @@ class Payment(models.Model):
     payment_method = models.CharField(
         max_length=10, choices=STATUS_CHOICES, verbose_name="Способ оплаты"
     )
+    session_id = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name="id сессии",
+        help_text="Укажите id сессии",
+    )
+    link = models.URLField(
+        max_length=400,
+        verbose_name="Ссылка на оплату",
+        help_text="Добавьте ссылку на оплату",
+        blank=True,
+        null=True,
+    )
 
     class Meta:
         verbose_name = "Платеж"
         verbose_name_plural = "Платежи"
+
+    def __str__(self):
+        return self.payment_sum
+
+
+class Subscription(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        verbose_name="Пользователь",
+        blank=True,
+        null=True,
+    )
+    course = models.ForeignKey(
+        Course,
+        on_delete=models.SET_NULL,
+        verbose_name="Подписка на курс",
+        blank=True,
+        null=True,
+    )
+    is_active = models.BooleanField(default=False, verbose_name="Статус подписки")
+
+    class Meta:
+        verbose_name = "Подписка"
+        verbose_name_plural = "Подписки"
