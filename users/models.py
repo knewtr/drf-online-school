@@ -90,17 +90,17 @@ class Payment(models.Model):
         verbose_name="Дата оплаты",
         help_text="Введите дату оплаты",
     )
-    course_paid = models.ForeignKey(
+    course = models.ForeignKey(
         Course,
         on_delete=models.SET_NULL,
-        verbose_name="Курс оплачен",
+        verbose_name="Курс",
         blank=True,
         null=True,
     )
-    lesson_paid = models.ForeignKey(
+    lesson = models.ForeignKey(
         Lesson,
         on_delete=models.SET_NULL,
-        verbose_name="Урок оплачен",
+        verbose_name="Урок",
         blank=True,
         null=True,
     )
