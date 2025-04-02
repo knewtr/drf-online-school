@@ -31,13 +31,13 @@ class CourseViewSet(ModelViewSet):
         return CourseSerializer
 
     def get_permissions(self):
-        if self.actions == "create":
+        if self.action == "create":
             self.permission_classes = (~IsModer,)
         elif self.actions in ["retrieve", "update"]:
             self.permission_classes = (IsModer | IsOwner,)
         elif self.actions == "destroy":
             self.permission_classes = (~IsModer | IsOwner,)
-        return super().get_permissions
+        return [permission() for permission in self.permission_classes]
 
 
 class LessonCreateApiView(CreateAPIView):
@@ -53,14 +53,14 @@ class LessonCreateApiView(CreateAPIView):
         lesson.owner = self.request.user
         lesson.save()
 
-    def get_permissions(self):
-        if self.request.method == "POST":
-            self.permission_classes = (~IsModer,)
-        elif self.request.method in ["GET", "PUT"]:
-            self.permission_classes = (IsModer | IsOwner,)
-        elif self.request.method == "DELETE":
-            self.permission_classes = (~IsModer | IsOwner,)
-        return [permission() for permission in self.permission_classes]
+    # def get_permissions(self):
+    #     if self.request.method == "POST":
+    #         self.permission_classes = (~IsModer,)
+    #     elif self.request.method in ["GET", "PUT"]:
+    #         self.permission_classes = (IsModer | IsOwner,)
+    #     elif self.request.method == "DELETE":
+    #         self.permission_classes = (~IsModer | IsOwner,)
+    #     return [permission() for permission in self.permission_classes]
 
 
 class LessonRetrieveApiView(RetrieveAPIView):
