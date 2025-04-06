@@ -15,6 +15,7 @@ from users.serializers import (PaymentSerializer, SubscriptionSerializer,
 from users.services import create_stripe_price, create_stripe_session
 
 
+
 class UserCreateAPIView(CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer

@@ -10,6 +10,7 @@ from materials.pagination import CustomPagination
 from materials.serializers import (CourseDetailSerializer, CourseSerializer,
                                    LessonSerializer)
 from users.permissions import IsModer, IsOwner
+from users.tasks import sendmail_course_updated
 
 
 class CourseViewSet(ModelViewSet):
@@ -23,6 +24,7 @@ class CourseViewSet(ModelViewSet):
 
     def perform_update(self, serializer):
         updated_course = serializer.save()
+        sendmail_course_updated.delay(updated_course)
         updated_course.save()
 
     def get_serializer_class(self):
