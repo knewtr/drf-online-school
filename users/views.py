@@ -12,7 +12,7 @@ from materials.models import Course, Lesson
 from users.models import Payment, Subscription, User
 from users.serializers import (PaymentSerializer, SubscriptionSerializer,
                                UserSerializer)
-from users.services import create_stripe_price, create_stripe_session
+from users.services import create_stripe_price, create_stripe_session, create_stripe_product
 
 
 
@@ -68,7 +68,8 @@ class PaymentCreateAPIView(CreateAPIView):
 
     def perform_create(self, serializer):
         payment = serializer.save(user=self.request.user)
-        product = payment.course.name if payment.course else payment.lesson.name
+        course = payment.course.name if payment.course else payment.lesson.name
+        product = create_stripe_product(course)
         price = create_stripe_price(payment.payment_sum, product)
         session_id, payment_link = create_stripe_session(price)
         payment.session_id = session_id
