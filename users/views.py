@@ -1,19 +1,20 @@
 from django.shortcuts import get_object_or_404, render
-from rest_framework import status
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import status
 from rest_framework.filters import OrderingFilter
 from rest_framework.generics import (CreateAPIView, DestroyAPIView,
                                      ListAPIView, RetrieveAPIView,
                                      UpdateAPIView)
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from users.permissions import IsModer
+
 from materials.models import Course, Lesson
 from users.models import Payment, Subscription, User
+from users.permissions import IsModer
 from users.serializers import (PaymentSerializer, SubscriptionSerializer,
                                UserSerializer)
-from users.services import create_stripe_price, create_stripe_session, create_stripe_product
-
+from users.services import (create_stripe_price, create_stripe_product,
+                            create_stripe_session)
 
 
 class UserCreateAPIView(CreateAPIView):
