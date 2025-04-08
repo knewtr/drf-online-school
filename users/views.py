@@ -1,22 +1,25 @@
 from django.shortcuts import get_object_or_404, render
+from rest_framework import status
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from rest_framework.generics import (CreateAPIView, DestroyAPIView,
                                      ListAPIView, RetrieveAPIView,
                                      UpdateAPIView)
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from users.permissions import IsModer
-from materials.models import Course
+from materials.models import Course, Lesson
 from users.models import Payment, Subscription, User
 from users.serializers import (PaymentSerializer, SubscriptionSerializer,
                                UserSerializer)
-from users.services import create_stripe_price, create_stripe_session
+from users.services import create_stripe_price, create_stripe_session, create_stripe_product
+
 
 
 class UserCreateAPIView(CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [AllowAny]
 
     def perform_create(self, serializer):
         user = serializer.save()
@@ -47,14 +50,27 @@ class UserDestroyAPIView(DestroyAPIView):
 class PaymentCreateAPIView(CreateAPIView):
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
-    permission_classes = (
-        IsAuthenticated,
-        ~IsModer,
-    )
+    permission_classes = [IsAuthenticated, ~IsModer]
+
+    # def create(self, request, *args, **kwargs):
+    #     serializer = self.get_serializer(data=request.data)
+    #     serializer.is_valid(raise_exception=True)
+    #
+    #     if not request.user.is_authenticated:
+    #         return Response(
+    #             {"error": "Authentication credentials were not provided."},
+    #             status=status.HTTP_401_UNAUTHORIZED
+    #         )
+    #
+    #     self.perform_create(serializer)
+    #     headers = self.get_success_headers(serializer.data)
+    #     return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def perform_create(self, serializer):
         payment = serializer.save(user=self.request.user)
-        price = create_stripe_price(payment.amount)
+        course = payment.course.name if payment.course else payment.lesson.name
+        product = create_stripe_product(course)
+        price = create_stripe_price(payment.payment_sum, product)
         session_id, payment_link = create_stripe_session(price)
         payment.session_id = session_id
         payment.link = payment_link

@@ -10,4 +10,7 @@ coverage==7.7.1
 drf-spectacular==0.28.0
 drf-yasg==1.21.10
 stripe==11.6.0
-
+celery==5.5.0
+redis==5.2.1
+django-celery-beat==2.7.0
+eventlet==0.39.1

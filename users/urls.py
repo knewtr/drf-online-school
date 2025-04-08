@@ -38,6 +38,6 @@ urlpatterns = [
     path("user/<int:pk>/update/", UserUpdateAPIView.as_view(), name="user_update"),
     path("user/<int:pk>/delete/", UserDestroyAPIView.as_view(), name="user_delete"),
     path(
-        "subscription/", SubscriptionCreateAPIView.as_view(), name="course_subscription"
+        "subscription/create/", SubscriptionCreateAPIView.as_view(), name="course_subscription"
     ),
 ]
