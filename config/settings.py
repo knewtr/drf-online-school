@@ -161,14 +161,14 @@ CELERY_CACHE_BACKEND = os.getenv("CELERY_CACHE_BACKEND")
 
 
 CELERY_BEAT_SCHEDULE = {
-    'sendmail_course_updated': {
-        'task': 'users.tasks.sendmail_course_updated',
-        'schedule': timedelta(minutes=1),
+    "sendmail_course_updated": {
+        "task": "users.tasks.sendmail_course_updated",
+        "schedule": timedelta(minutes=1),
     },
-    'check_user_last_login':{
-        'task': 'users.tasks.check_user_last_login',
-        'schedule': timedelta(days=1),
-    }
+    "check_user_last_login": {
+        "task": "users.tasks.check_user_last_login",
+        "schedule": timedelta(days=1),
+    },
 }
 
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
