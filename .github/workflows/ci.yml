@@ -71,11 +71,11 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.SSH_KEY }}
 
-  - name: Deploy to Server
-    run: |
-      ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-        docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/drf-online-school:${{ github.sha }}
-        docker stop drf-online-school || true
-        docker rm drf-online-school || true
-        docker run -d --name drf-online-school -p 80:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/drf-online-school:${{ github.sha }}
-      EOF
+    - name: Deploy to Server
+      run: |
+        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/drf-online-school:${{ github.sha }}
+          docker stop drf-online-school || true
+          docker rm drf-online-school || true
+          docker run -d --name drf-online-school -p 80:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/drf-online-school:${{ github.sha }}
+        EOF
