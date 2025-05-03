@@ -38,6 +38,11 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+    - name: Create .env file
+      run: |
+        touch .env
+        echo '"${{ secrets.ENV_FILE }}"' | sed "s/\"//g" > .env
+
     - name: Run tests
       run: python manage.py test
 
