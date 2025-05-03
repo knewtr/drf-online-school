@@ -38,17 +38,10 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Set environment variables
-      run: |
-        echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> $GITHUB_ENV
-
-    - name: Create .env file
-      run: |
-        touch .env
-        echo '"${{ secrets.ENV_FILE }}"' | sed "s/\"//g" > .env
-
     - name: Run tests
       run: python manage.py test
+      env:
+        SECRET_KEY: test_secret_key
 
   build:
     runs-on: ubuntu-latest
@@ -62,15 +55,39 @@ jobs:
       run: echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
 
     - name: Build Docker image
-      run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/drf-online-school:${{ github.sha }} .
+      run: |
+        docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/drf-online-school:latest .
+        docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/nginx:latest nginx/.
 
     - name: Push Docker image to Docker Hub
-      run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/drf-online-school:${{ github.sha }}
+      run: |
+        docker push ${{ secrets.DOCKER_HUB_USERNAME }}/drf-online-school:latest
+        docker push ${{ secrets.DOCKER_HUB_USERNAME }}/nginx:latest
+
+  copy_files_in_server:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Create .env file
+        run: |
+          touch .env
+          echo '"${{ secrets.ENV_FILE }}"' | sed "s/\"//g" > .env
+
+      - name: copy file
+        uses: knewtr/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          source: "docker-compose.yml,.env"
+          target: ${{ secrets.DEPLOY_DIR }}
 
   deploy:
     runs-on: ubuntu-latest
-    needs: build
-
+    needs: [build, copy_files_in_server]
     steps:
     - name: Set up SSH
       uses: webfactory/ssh-agent@v0.9.0
@@ -80,8 +97,8 @@ jobs:
     - name: Deploy to Server
       run: |
         ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/drf-online-school:${{ github.sha }}
-          docker stop drf-online-school || true
-          docker rm drf-online-school || true
-          docker run -d --name drf-online-school -p 80:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/drf-online-school:${{ github.sha }}
-        EOF
+            cd ${{ secrets.DEPLOY_DIR }}
+            sudo docker compose down
+            sudo docker container rm $(docker ps -a -q)
+            sudo docker compose up -d --build
+          EOF
