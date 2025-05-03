@@ -64,31 +64,30 @@ jobs:
         docker push ${{ secrets.DOCKER_HUB_USERNAME }}/drf-online-school:latest
         docker push ${{ secrets.DOCKER_HUB_USERNAME }}/nginx:latest
 
-  copy_files_in_server:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-
-      - name: Create .env file
-        run: |
-          touch .env
-          echo '"${{ secrets.ENV_FILE }}"' | sed "s/\"//g" > .env
-
-      - name: copy file
-        uses: appleboy/ssh-action@v0.1.0
-        with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          sync: true
-          source: "docker-compose.yml,.env"
-          target: ${{ secrets.DEPLOY_DIR }}
+#  copy_files_in_server:
+#    needs: test
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Check out code
+#        uses: actions/checkout@v3
+#
+#      - name: Create .env file
+#        run: |
+#          touch .env
+#          echo '"${{ secrets.ENV_FILE }}"' | sed "s/\"//g" > .env
+#
+#      - name: copy file
+#        uses: appleboy/ssh-action@v0.1.0
+#        with:
+#          host: ${{ secrets.SERVER_IP }}
+#          username: ${{ secrets.SSH_USER }}
+#          key: ${{ secrets.SSH_KEY }}
+#          source: "docker-compose.yml,.env"
+#          target: ${{ secrets.DEPLOY_DIR }}
 
   deploy:
     runs-on: ubuntu-latest
-    needs: [build, copy_files_in_server]
+    needs: build
     steps:
     - name: Set up SSH
       uses: webfactory/ssh-agent@v0.9.0
