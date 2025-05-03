@@ -82,6 +82,7 @@ jobs:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
+          sync: true
           source: "docker-compose.yml,.env"
           target: ${{ secrets.DEPLOY_DIR }}
 
