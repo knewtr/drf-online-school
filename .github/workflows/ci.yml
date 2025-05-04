@@ -75,9 +75,9 @@ jobs:
 
     - name: Deploy to Server
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-            cd ${{ secrets.DEPLOY_DIR }}
-            sudo docker compose down
-            sudo docker container rm $(docker ps -a -q)
-            sudo docker compose up -d --build
-        EOF
+          ssh -o StrictHostKeyChecking=no -vT ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+            sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/drf-online-school:${{ github.sha }}
+            sudo docker stop drf-online-school || true
+            sudo docker rm drf-online-school || true
+            sudo docker run -d --name drf-online-school -p 80:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/drf-online-school:${{ github.sha }}
+          EOF
