@@ -57,12 +57,12 @@ jobs:
     - name: Build Docker image
       run: |
         docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/drf-online-school:latest .
-        docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/nginx:latest nginx/.
+        docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/drf-online-school:${{ github.sha }} .
 
     - name: Push Docker image to Docker Hub
       run: |
         docker push ${{ secrets.DOCKER_HUB_USERNAME }}/drf-online-school:latest
-        docker push ${{ secrets.DOCKER_HUB_USERNAME }}/nginx:latest
+        docker push ${{ secrets.DOCKER_HUB_USERNAME }}/drf-online-school:${{ github.sha }}
 
   deploy:
     runs-on: ubuntu-latest
