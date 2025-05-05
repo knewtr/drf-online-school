@@ -3,7 +3,7 @@ from rest_framework.serializers import ModelSerializer, SerializerMethodField
 
 from materials.models import Course, Lesson
 from materials.validators import URLValidator
-from users.serializers import SubscriptionSerializer
+from users.models import Subscription
 
 
 class LessonSerializer(ModelSerializer):

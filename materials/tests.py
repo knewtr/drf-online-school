@@ -96,19 +96,7 @@ class LessonUnauthorizedTestCase(APITestCase):
     def test_lesson_retrieve(self):
         url = reverse("materials:lessons_retrieve", args=(self.lesson.pk,))
         response = self.client.get(url)
-        data = response.json()
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-
-    # def test_lesson_create(self):
-    #     url = reverse("materials:lessons_create")
-    #     data = {
-    #         "name": "Тестовый урок 2",
-    #         "courses": self.course.pk,
-    #         "link": "https://www.youtube.com/2",
-    #         "owner": self.user.pk
-    #     }
-    #     response = self.client.post(url, data)
-    #     self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_lesson_update(self):
         url = reverse("materials:lessons_update", args=(self.lesson.pk,))

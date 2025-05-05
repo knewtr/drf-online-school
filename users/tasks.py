@@ -1,9 +1,11 @@
+from datetime import datetime
+
 from celery import shared_task
 from django.core.mail import send_mail
 from django.utils import timezone
 
 from config.settings import EMAIL_HOST_USER
-from users.models import Subscription
+from users.models import Subscription, User
 
 
 @shared_task
@@ -25,7 +27,7 @@ def sendmail_course_updated(course):
 def check_user_last_login():
     """Блокирует пользователя, если тот не авторизовался в течение 30 дней"""
     today = timezone.now().today().date()
-    users = Users.objects.filter(
+    users = User.objects.filter(
         is_active=True, is_staff=False, is_superuser=False, last_login__isnull=False
     )
     for user in users:
